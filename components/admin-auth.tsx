@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { Lock } from "lucide-react"
+import Link from "next/link"
+import { Lock, ArrowLeft } from "lucide-react"
 
 interface AdminAuthProps {
   children: React.ReactNode
@@ -49,12 +50,22 @@ export function AdminAuth({ children }: AdminAuthProps) {
       <div className="min-h-screen bg-gradient-to-b from-gray-800 to-gray-900 flex items-center justify-center p-4">
         <div className="w-full max-w-md">
           <div className="bg-gray-800 rounded-3xl p-8 shadow-2xl border border-gray-700">
+            <div className="mb-6">
+              <Link
+                href="/"
+                className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors duration-200"
+              >
+                <ArrowLeft className="w-5 h-5" />
+                <span>Back to Home</span>
+              </Link>
+            </div>
+
             <div className="flex justify-center mb-6">
               <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center">
                 <Lock className="w-8 h-8 text-gray-300" />
               </div>
             </div>
-            
+
             <h1 className="text-3xl font-bold text-white text-center mb-2">Admin Access</h1>
             <p className="text-gray-400 text-center mb-8">Enter password to continue</p>
 
