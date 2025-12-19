@@ -1,103 +1,38 @@
-import Image from "next/image";
+import { WouldYouRather } from "@/components/would-you-rather"
+import { getActiveExperiment } from "@/lib/firestore"
+import { Item } from "@/lib/types"
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+// Fallback cards in case Firestore fetch fails or no active experiment exists
+const FALLBACK_CARDS: Item[] = [
+  { id: "1", index: 0, name: "Card 1", imageUrl: "https://hd.wallpaperswide.com/thumbs/naruto_uzumaki_4-t2.jpg" },
+  { id: "2", index: 1, name: "Card 2", imageUrl: "https://a.storyblok.com/f/178900/960x540/0c18c46877/ena-chikawa-in-laid-back-camp-s1-e2.jpg" },
+  { id: "3", index: 2, name: "Card 3", imageUrl: "https://hd.wallpaperswide.com/thumbs/one_piece_monkey_d__luffy_ii-t2.jpg" },
+  { id: "4", index: 3, name: "Card 4", imageUrl: "https://a.storyblok.com/f/178900/960x540/3855da2716/hello-kitty-sanrio.jpg" },
+  { id: "5", index: 4, name: "Card 5", imageUrl: "https://s.yimg.com/ny/api/res/1.2/6bDvQQKhgyzZeUUTiXtJjw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTI0MDA7aD0xMzUwO2NmPXdlYnA-/https://media.zenfs.com/en/techradar_949/9f6d5164acd2439835c8c54835baa58e" },
+  { id: "6", index: 5, name: "Card 6", imageUrl: "https://cdn.bhdw.net/im/boruto-naruto-next-generation-naruto-uzumaki-baryon-mode-wallpaper-80676_w635.webp" },
+  { id: "7", index: 6, name: "Card 7", imageUrl: "https://hd.wallpaperswide.com/thumbs/minion_2-t2.jpg" },
+  { id: "8", index: 7, name: "Card 8", imageUrl: "https://hd.wallpaperswide.com/thumbs/pokemon_x-t2.jpg" },
+  { id: "9", index: 8, name: "Card 9", imageUrl: "https://a.storyblok.com/f/178900/960x540/6c73a2d708/dragon-ball-super-op.jpg" },
+]
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+export default async function Home() {
+  let cards: Item[] = FALLBACK_CARDS
+  let experimentId: string | undefined = undefined
+
+  try {
+    // Fetch the active experiment from Firestore
+    const experiment = await getActiveExperiment()
+
+    // Use experiment data if available, otherwise use fallback
+    if (experiment && experiment.items && experiment.items.length > 0) {
+      cards = experiment.items
+      experimentId = experiment.id
+    } else {
+      console.warn('No active experiment found, using fallback cards')
+    }
+  } catch (error) {
+    console.error('Error fetching active experiment, using fallback cards:', error)
+  }
+
+  return <WouldYouRather cards={cards} experimentId={experimentId} />
 }
