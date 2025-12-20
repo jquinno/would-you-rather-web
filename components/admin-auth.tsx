@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Lock, ArrowLeft } from "lucide-react"
 
@@ -8,11 +8,23 @@ interface AdminAuthProps {
   children: React.ReactNode
 }
 
+const ADMIN_AUTH_KEY = "admin_authenticated"
+
 export function AdminAuth({ children }: AdminAuthProps) {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isChecking, setIsChecking] = useState(true)
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+
+  // Check for existing authentication on mount
+  useEffect(() => {
+    const authStatus = sessionStorage.getItem(ADMIN_AUTH_KEY)
+    if (authStatus === "true") {
+      setIsAuthenticated(true)
+    }
+    setIsChecking(false)
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -31,6 +43,7 @@ export function AdminAuth({ children }: AdminAuthProps) {
       const data = await response.json()
 
       if (response.ok && data.success) {
+        sessionStorage.setItem(ADMIN_AUTH_KEY, "true")
         setIsAuthenticated(true)
         setPassword("")
       } else {
@@ -42,6 +55,15 @@ export function AdminAuth({ children }: AdminAuthProps) {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  // Show loading state while checking authentication
+  if (isChecking) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-800 to-gray-900 flex items-center justify-center p-4">
+        <div className="text-white text-lg">Loading...</div>
+      </div>
+    )
   }
 
   // Show password prompt if not authenticated

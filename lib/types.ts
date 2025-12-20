@@ -39,3 +39,27 @@ export interface SubmitVoteResponse {
   voteId?: string
 }
 
+export interface CreateExperimentRequest {
+  name: string
+  items: Array<{
+    name: string
+    imageUrl: string
+  }>
+}
+
+export interface CreateExperimentResponse {
+  success: boolean
+  message?: string
+  experimentId?: string
+  pairStatsInitialized?: number
+}
+
+export interface ExportExperimentRequest {
+  experimentId?: string
+}
+
+export interface ExportExperimentResponse {
+  success: boolean
+  message?: string
+}
+

@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { ArrowLeft, FileDown } from "lucide-react"
 import { AdminAuth } from "@/components/admin-auth"
+import { ExportDataButton } from "@/components/export-data-button"
 
 export default function ExportPage() {
   return (
@@ -26,10 +27,11 @@ export default function ExportPage() {
 
             <h1 className="text-4xl font-bold text-white text-center mb-4">Export Data</h1>
 
-            <div className="text-center text-gray-400">
-              <p className="text-lg">Coming Soon</p>
-              <p className="text-sm mt-2">Export functionality will be available here</p>
-            </div>
+            <p className="text-gray-400 text-center mb-6">
+              Click the button below to export experiment data. The backend will process your request and provide the results.
+            </p>
+
+            <ExportDataButton />
           </div>
         </div>
       </div>

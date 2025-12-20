@@ -4,7 +4,7 @@
 
 import { httpsCallable, HttpsCallableResult } from 'firebase/functions'
 import { functions } from './firebase'
-import { SubmitVoteRequest, SubmitVoteResponse } from './types'
+import { SubmitVoteRequest, SubmitVoteResponse, CreateExperimentRequest, CreateExperimentResponse, ExportExperimentRequest, ExportExperimentResponse } from './types'
 
 /**
  * Submit a vote for an experiment
@@ -33,6 +33,72 @@ export async function submitVote(
     return {
       success: false,
       message: error instanceof Error ? error.message : 'Failed to submit vote',
+    }
+  }
+}
+
+/**
+ * Create a new experiment
+ *
+ * @param request - The experiment creation request containing name and items
+ * @returns Promise with the experiment creation response
+ */
+export async function createExperiment(
+  request: CreateExperimentRequest
+): Promise<CreateExperimentResponse> {
+  try {
+    // Get the callable function reference
+    const createExperimentFunction = httpsCallable<CreateExperimentRequest, CreateExperimentResponse>(
+      functions,
+      'createExperiment'
+    )
+
+    // Call the function
+    console.log('Sending request to createExperiment:', request)
+    const result: HttpsCallableResult<CreateExperimentResponse> = await createExperimentFunction(request)
+    console.log('Received response from createExperiment:', result.data)
+
+    return result.data
+  } catch (error) {
+    console.error('Error creating experiment:', error)
+
+    // Return error response
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'Failed to create experiment',
+    }
+  }
+}
+
+/**
+ * Export experiment data
+ *
+ * @param request - The export request containing optional experimentId
+ * @returns Promise with the export response
+ */
+export async function exportExperiment(
+  request: ExportExperimentRequest = {}
+): Promise<ExportExperimentResponse> {
+  try {
+    // Get the callable function reference
+    const exportExperimentFunction = httpsCallable<ExportExperimentRequest, ExportExperimentResponse>(
+      functions,
+      'exportExperiment'
+    )
+
+    // Call the function
+    console.log('Sending request to exportExperiment:', request)
+    const result: HttpsCallableResult<ExportExperimentResponse> = await exportExperimentFunction(request)
+    console.log('Received response from exportExperiment:', result.data)
+
+    return result.data
+  } catch (error) {
+    console.error('Error exporting experiment:', error)
+
+    // Return error response
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : 'Failed to export experiment',
     }
   }
 }
