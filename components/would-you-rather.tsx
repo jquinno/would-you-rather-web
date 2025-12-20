@@ -108,6 +108,7 @@ export function WouldYouRather({ cards, experimentId }: WouldYouRatherProps) {
           loserId,
           sessionId,
           source: 'web',
+          userName,
         })
 
         if (!response.success) {
@@ -269,7 +270,6 @@ export function WouldYouRather({ cards, experimentId }: WouldYouRatherProps) {
                     <div className="flex-1">
                       {topCard && lastSelectedCardId === topCard.id && <div className="text-white text-2xl">✓</div>}
                     </div>
-                    <div className="text-white font-bold text-lg">{bluePercentage}%</div>
                   </div>
                   <div className="bg-white rounded-2xl aspect-video overflow-hidden">
                     {topCard && (
@@ -302,7 +302,6 @@ export function WouldYouRather({ cards, experimentId }: WouldYouRatherProps) {
                     <div className="flex-1">
                       {bottomCard && lastSelectedCardId === bottomCard.id && <div className="text-white text-2xl">✓</div>}
                     </div>
-                    <div className="text-white font-bold text-lg">{redPercentage}%</div>
                   </div>
                   <div className="bg-white rounded-2xl aspect-video overflow-hidden">
                     {bottomCard && (
