@@ -31,6 +31,7 @@ export interface SubmitVoteRequest {
   userId?: string
   sessionId?: string
   source?: string
+  userName?: string
 }
 
 export interface SubmitVoteResponse {
