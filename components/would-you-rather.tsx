@@ -4,15 +4,16 @@ import { useState, useEffect } from "react"
 import { Item } from '@/lib/types'
 import { submitVote } from '@/lib/cloudFunctions'
 import { getOrCreateSessionId } from '@/lib/session'
+import { getActiveExperiment } from '@/lib/firestore'
 
 interface WouldYouRatherProps {
-  cards: Item[]
+  cards?: Item[]
   experimentId?: string
 }
 
 type ItemPair = [Item, Item]
 
-export function WouldYouRather({ cards, experimentId }: WouldYouRatherProps) {
+export function WouldYouRather({ cards: initialCards, experimentId: initialExperimentId }: WouldYouRatherProps) {
   const [userName, setUserName] = useState<string>("")
   const [hasStarted, setHasStarted] = useState<boolean>(false)
   const [inputValue, setInputValue] = useState<string>("")
@@ -31,6 +32,12 @@ export function WouldYouRather({ cards, experimentId }: WouldYouRatherProps) {
   const [isSubmittingVote, setIsSubmittingVote] = useState<boolean>(false)
   const [voteError, setVoteError] = useState<string | null>(null)
   const [sessionId, setSessionId] = useState<string>("")
+
+  // State for experiment data
+  const [cards, setCards] = useState<Item[]>(initialCards || [])
+  const [experimentId, setExperimentId] = useState<string | undefined>(initialExperimentId)
+  const [isFetchingExperiment, setIsFetchingExperiment] = useState<boolean>(false)
+  const [experimentError, setExperimentError] = useState<string | null>(null)
 
   // Initialize session ID on mount
   useEffect(() => {
@@ -145,11 +152,34 @@ export function WouldYouRather({ cards, experimentId }: WouldYouRatherProps) {
 
   const redPercentage = 100 - bluePercentage
 
-  const handleStartGame = (e: React.FormEvent) => {
+  const handleStartGame = async (e: React.FormEvent) => {
     e.preventDefault()
     if (inputValue.trim()) {
       setUserName(inputValue.trim())
-      setHasStarted(true)
+
+      // Fetch the latest experiment data before starting the game
+      setIsFetchingExperiment(true)
+      setExperimentError(null)
+
+      try {
+        const experiment = await getActiveExperiment()
+
+        if (!experiment || !experiment.items || experiment.items.length === 0) {
+          setExperimentError('No active experiment found. Please check back later.')
+          setIsFetchingExperiment(false)
+          return
+        }
+
+        // Set the experiment data
+        setCards(experiment.items)
+        setExperimentId(experiment.id)
+        setHasStarted(true)
+      } catch (error) {
+        console.error('Error fetching active experiment:', error)
+        setExperimentError('Unable to load the experiment. Please try again.')
+      } finally {
+        setIsFetchingExperiment(false)
+      }
     }
   }
 
@@ -175,15 +205,23 @@ export function WouldYouRather({ cards, experimentId }: WouldYouRatherProps) {
                   placeholder="Enter your name"
                   className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   autoFocus
+                  disabled={isFetchingExperiment}
                 />
               </div>
 
+              {/* Error message display */}
+              {experimentError && (
+                <div className="p-3 bg-red-500/20 border border-red-500 rounded-lg">
+                  <p className="text-red-200 text-sm text-center">{experimentError}</p>
+                </div>
+              )}
+
               <button
                 type="submit"
-                disabled={!inputValue.trim()}
+                disabled={!inputValue.trim() || isFetchingExperiment}
                 className="w-full py-3 px-4 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-bold rounded-lg transition-colors duration-200"
               >
-                Start Game
+                {isFetchingExperiment ? 'Loading...' : 'Start Game'}
               </button>
             </form>
           </div>
