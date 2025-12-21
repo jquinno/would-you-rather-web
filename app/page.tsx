@@ -2,37 +2,33 @@ import { WouldYouRather } from "@/components/would-you-rather"
 import { getActiveExperiment } from "@/lib/firestore"
 import { Item } from "@/lib/types"
 
-// Fallback cards in case Firestore fetch fails or no active experiment exists
-const FALLBACK_CARDS: Item[] = [
-  { id: "1", index: 0, name: "Card 1", imageUrl: "https://hd.wallpaperswide.com/thumbs/naruto_uzumaki_4-t2.jpg" },
-  { id: "2", index: 1, name: "Card 2", imageUrl: "https://a.storyblok.com/f/178900/960x540/0c18c46877/ena-chikawa-in-laid-back-camp-s1-e2.jpg" },
-  { id: "3", index: 2, name: "Card 3", imageUrl: "https://hd.wallpaperswide.com/thumbs/one_piece_monkey_d__luffy_ii-t2.jpg" },
-  { id: "4", index: 3, name: "Card 4", imageUrl: "https://a.storyblok.com/f/178900/960x540/3855da2716/hello-kitty-sanrio.jpg" },
-  { id: "5", index: 4, name: "Card 5", imageUrl: "https://s.yimg.com/ny/api/res/1.2/6bDvQQKhgyzZeUUTiXtJjw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTI0MDA7aD0xMzUwO2NmPXdlYnA-/https://media.zenfs.com/en/techradar_949/9f6d5164acd2439835c8c54835baa58e" },
-  { id: "6", index: 5, name: "Card 6", imageUrl: "https://cdn.bhdw.net/im/boruto-naruto-next-generation-naruto-uzumaki-baryon-mode-wallpaper-80676_w635.webp" },
-  { id: "7", index: 6, name: "Card 7", imageUrl: "https://hd.wallpaperswide.com/thumbs/minion_2-t2.jpg" },
-  { id: "8", index: 7, name: "Card 8", imageUrl: "https://hd.wallpaperswide.com/thumbs/pokemon_x-t2.jpg" },
-  { id: "9", index: 8, name: "Card 9", imageUrl: "https://a.storyblok.com/f/178900/960x540/6c73a2d708/dragon-ball-super-op.jpg" },
-]
-
 export default async function Home() {
-  let cards: Item[] = FALLBACK_CARDS
-  let experimentId: string | undefined = undefined
-
   try {
     // Fetch the active experiment from Firestore
     const experiment = await getActiveExperiment()
 
-    // Use experiment data if available, otherwise use fallback
-    if (experiment && experiment.items && experiment.items.length > 0) {
-      cards = experiment.items
-      experimentId = experiment.id
-    } else {
-      console.warn('No active experiment found, using fallback cards')
+    // Only render if we have a valid experiment
+    if (!experiment || !experiment.items || experiment.items.length === 0) {
+      return (
+        <div className="min-h-screen bg-gradient-to-b from-gray-800 to-gray-900 flex items-center justify-center p-4">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-white mb-4">No Active Experiment</h1>
+            <p className="text-gray-400">Please check back later or contact an administrator.</p>
+          </div>
+        </div>
+      )
     }
-  } catch (error) {
-    console.error('Error fetching active experiment, using fallback cards:', error)
-  }
 
-  return <WouldYouRather cards={cards} experimentId={experimentId} />
+    return <WouldYouRather cards={experiment.items} experimentId={experiment.id} />
+  } catch (error) {
+    console.error('Error fetching active experiment:', error)
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-800 to-gray-900 flex items-center justify-center p-4">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-white mb-4">Error Loading Experiment</h1>
+          <p className="text-gray-400">Unable to load the experiment. Please try again later.</p>
+        </div>
+      </div>
+    )
+  }
 }
