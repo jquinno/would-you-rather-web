@@ -268,7 +268,7 @@ export function WouldYouRather({ cards: initialCards, experimentId: initialExper
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-800 to-gray-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-b from-gray-800 to-gray-900 flex items-center justify-center p-4 pt-20">
       <div className="w-full max-w-sm">
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-white text-center">Would You Rather?</h1>
@@ -294,7 +294,7 @@ export function WouldYouRather({ cards: initialCards, experimentId: initialExper
 
         <div className="relative h-[600px]">
           <div className="absolute inset-0 flex flex-col items-center justify-start px-4 pt-4">
-            <div className="w-4/5 flex flex-col gap-0">
+            <div className="w-full flex flex-col gap-0">
               <div
                 onClick={() => !isSubmittingVote && handleCardClick("top")}
                 className={`transition-all duration-300 ${
@@ -303,13 +303,13 @@ export function WouldYouRather({ cards: initialCards, experimentId: initialExper
                   animatingCard === "top" ? "scale-95 opacity-50" : animatingCard === "bottom" ? "scale-100" : ""
                 }`}
               >
-                <div className="bg-blue-500 rounded-3xl p-4 shadow-2xl">
-                  <div className="flex items-start justify-between mb-3 px-2">
+                <div className="bg-blue-500 rounded-2xl p-2 shadow-2xl">
+                  <div className="flex items-start justify-between mb-2 px-2">
                     <div className="flex-1">
                       {topCard && lastSelectedCardId === topCard.id && <div className="text-white text-2xl">✓</div>}
                     </div>
                   </div>
-                  <div className="bg-white rounded-2xl aspect-video overflow-hidden">
+                  <div className="bg-white rounded-xl aspect-video overflow-hidden">
                     {topCard && (
                       <img
                         src={topCard.imageUrl || "/placeholder.svg"}
@@ -335,13 +335,13 @@ export function WouldYouRather({ cards: initialCards, experimentId: initialExper
                   animatingCard === "bottom" ? "scale-95 opacity-50" : animatingCard === "top" ? "scale-100" : ""
                 }`}
               >
-                <div className="bg-red-500 rounded-3xl p-4 shadow-2xl">
-                  <div className="flex items-start justify-between mb-3 px-2">
+                <div className="bg-red-500 rounded-2xl p-2 shadow-2xl">
+                  <div className="flex items-start justify-between mb-2 px-2">
                     <div className="flex-1">
                       {bottomCard && lastSelectedCardId === bottomCard.id && <div className="text-white text-2xl">✓</div>}
                     </div>
                   </div>
-                  <div className="bg-white rounded-2xl aspect-video overflow-hidden">
+                  <div className="bg-white rounded-xl aspect-video overflow-hidden">
                     {bottomCard && (
                       <img
                         src={bottomCard.imageUrl || "/placeholder.svg"}
