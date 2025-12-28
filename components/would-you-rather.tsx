@@ -306,6 +306,9 @@ export function WouldYouRather({ cards: initialCards, experimentId: initialExper
                 <div className="bg-blue-500 rounded-2xl p-2 shadow-2xl">
                   <div className="flex items-start justify-between mb-2 px-2">
                     <div className="flex-1">
+                      {topCard && <p className="text-white font-semibold">{topCard.name}</p>}
+                    </div>
+                    <div>
                       {topCard && lastSelectedCardId === topCard.id && <div className="text-white text-2xl">✓</div>}
                     </div>
                   </div>
@@ -338,6 +341,9 @@ export function WouldYouRather({ cards: initialCards, experimentId: initialExper
                 <div className="bg-red-500 rounded-2xl p-2 shadow-2xl">
                   <div className="flex items-start justify-between mb-2 px-2">
                     <div className="flex-1">
+                      {bottomCard && <p className="text-white font-semibold">{bottomCard.name}</p>}
+                    </div>
+                    <div>
                       {bottomCard && lastSelectedCardId === bottomCard.id && <div className="text-white text-2xl">✓</div>}
                     </div>
                   </div>
